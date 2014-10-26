@@ -1,0 +1,9 @@
+.userLogo {
+	width: 90px;
+}
+#allMessages .userItem:hover {
+	cursor: pointer;
+}
+.openChats .item:hover {
+	cursor: pointer;
+}

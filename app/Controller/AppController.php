@@ -1,8 +1,10 @@
 <?php
 App::uses('Controller', 'Controller');
 class AppController extends Controller {
+	public $components = array('Session');
+	public $uses = array('ChatUser');
     public $paginate;
-	public $aNavBar = array(), $aBottomLinks = array(), $currMenu = '', $currLink = '', $pageTitle = '';
+    protected $currUser = array(), $currUserID;
     
     public function __construct($request = null, $response = null) {
 	    $this->_beforeInit();
@@ -18,16 +20,30 @@ class AppController extends Controller {
 	    // after construct actions here
 	}
 	
-    public function isAuthorized($user) {
-    	$this->set('currUser', $user);
-		return Hash::get($user, 'active');
+	public function isAuthorized($user) {
+		return true;
+	}
+	
+	public function beforeFilter() {
+		$userID = Hash::get($this->request->params, 'pass.0');
+		$action = Hash::get($this->request->params, 'action');
+		if ($userID && $action == 'auth') {
+			$this->Session->write('currUser.id', $userID);
+			$this->redirect('/');
+			return false;
+		}
+		// fdebug($this->Session->read(), 'session.log', false);
+		$this->currUserID = $this->Session->read('currUser.id');
+		if (!$this->currUserID) {
+			$this->autoRender = false;
+			exit('You must be authorized');
+		}
+		$this->currUser = $this->ChatUser->getUser($this->currUserID);
+		fdebug($this->currUser, 'curr_user'.$this->currUserID.'.log', false);
 	}
 	
 	public function beforeRender() {
-		$this->set('aNavBar', $this->aNavBar);
-		$this->set('currMenu', $this->currMenu);
-		$this->set('aBottomLinks', $this->aBottomLinks);
-		$this->set('currLink', $this->currLink);
-		$this->set('pageTitle', $this->pageTitle);
+		$this->set('currUser', $this->currUser);
+		$this->set('currUserID', $this->currUserID);
 	}
 }

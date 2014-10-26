@@ -54,4 +54,19 @@ class AppModel extends Model {
 		return $this->find('all', $this->_getObjectConditions($objectType, $objectID));
 	}
 	
+	/**
+	 * Loads a model inside another model. 
+	 * Requires to have proper variables in parent model.
+	 *
+	 * @param mixed $models - model name or array of model names
+	 */
+	public function loadModel($models) {
+		if (!is_array($models)) {
+			$models = array($models);
+		}
+		foreach($models as $model) {
+			App::import('Model', $model);
+			$this->$model = new $model();
+		}
+	}
 }
