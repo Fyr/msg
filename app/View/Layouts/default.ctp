@@ -6,13 +6,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
 <?php
+	$baseURL = Configure::read('baseURL');
+	
 	echo $this->Html->meta('icon');
 	
 	$css = array(
 		'bootstrap.min', 
 		'glyphicons', 
 		'style', 
-		'extra'
+		'msg_panel',
+		$baseURL['ipad'].'css/struct_panel.css'
 	);
 	echo $this->Html->css($css);
 	
@@ -22,7 +25,10 @@
 		'vendor/jquery.nicescroll.min',
 		'vendor/tmpl.min',
 		'/core/js/json_handler',
-		'chat'
+		'chat',
+		$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'jsSettings'), true),
+		$baseURL['ipad'].'SiteAjax/jsSettings',
+		$baseURL['ipad'].'/js/struct.js'
 	);
 	echo $this->Html->script($aScripts);
 
@@ -33,34 +39,34 @@
 </head>
 <body>
 <script type="text/javascript">
-var chatURL = {
-	contactList: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'contactList'))?>',
-	sendMsg: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'sendMsg'))?>.json',
-	updateState: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'updateState'))?>.json',
-	openRoom: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'openRoom'))?>.json',
-	markRead: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'markRead'))?>.json',
-}
 var timer = null;
 $(document).ready(function () {
 	
 	$(window).resize(function() {
-		Chat.fixDialogHeight();
+		$("#menuBarScroll").height($(window).height());
+		$("#menuBarScroll").getNiceScroll().resize();
+		
+		Chat.fixPanelHeight();
+		
+		// handle resize for iPad panel
+		Struct.fixPanelHeight();
 	});
-	Chat.fixDialogHeight();
+	
 	
 	$("#menuBarScroll").niceScroll({cursorwidth:"3px",cursorcolor:"#000",cursorborder:"none"});
+	$("#menuBarScroll").height($(window).height());
+	$("#menuBarScroll").getNiceScroll().resize();
+		
 	$(".dialog").niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none"});
 	$(".sendForm textarea").niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none", autohidemode: "false"});
 	
-	Chat.scrollTop();
-	
-	$(".menuBar .glyphicons:not(.chat)").bind('click', function(event) {
-		$(".menuBar div").removeClass("active");
-		$(this).closest("div").addClass("active");
-	});
+	Chat.initPanel($(".userMessages.chat").get(0));
 	
 	$(".menuBar .glyphicons.chat").bind('click', function(event) {
-		Chat.toggleContactList();
+		if ($(".userMessages.ipad").is(':visible')) {
+			Struct.panelHide();
+		}
+		Chat.panelToggle();
 	});
 	
 	$(".sendForm .icon_enter").bind('click', function() {
@@ -78,23 +84,51 @@ $(document).ready(function () {
 		clearInterval(timer);
 		Chat.updateState();
 	});
-	
+	/*
 	timer = setInterval(function(){
 		Chat.updateState();
-	}, 500);
+	}, 5000);
+	*/
+	
+	// Init iPad panel
+<?
+	if (!TEST_ENV) {
+?>
+	Struct.initPanel($(".userMessages.struct").get(0));
+	$(".menuBar .glyphicons.ipad").bind('click', function(event) {
+		if ($(".userMessages.chat").is(':visible')) {
+			Chat.panelHide();
+		}
+		Struct.panelToggle();
+	});
+<?
+	}
+?>
 });			
 </script>
 
-	<?=$this->element('panel')?>
-	<div class="userMessages" style="display: none">
-		<div class="searchBlock clearfix">
-			<input type="text" value="Найти собеседника"  />
-			<a href="javascript: void(0)" class="glyphicons search"></a>
-		</div>
-		<div id="allMessages">
-			<?// $this->element('contact_list')?>
+	<div class="menuBar">
+		<div id="menuBarScroll">
+			<img class="userLogo" src="<?=$currUser['Avatar']['url']?>" alt="" />
+			<div><a href="javascript: void(0)" class="glyphicons calendar"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons notes"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons chat"><span class="badge badge-important">11</span></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons search"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons credit_card"><span class="badge badge-important">1</span></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons file"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons cloud"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons nameplate"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons group"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons briefcase"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons ipad"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons settings"></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons log_out"></a></div>
 		</div>
 	</div>
+
+	<div class="userMessages chat" style="display: none"></div>
+	<div class="userMessages struct" style="display:none"></div>
+	
 	<div class="usersInChat">
 		<a class="icon icon_add" href="javascript: void(0)"></a>
 		<a href="javascript: void(0)"><img alt="" src="img/temp/2.jpg"></a>

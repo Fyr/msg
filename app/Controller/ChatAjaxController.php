@@ -5,6 +5,14 @@ class ChatAjaxController extends PAjaxController {
 	public $name = 'ChatAjax';
 	public $uses = array('ChatUser', 'ChatMessage', 'ChatEvent');
 	
+	public function jsSettings() {
+		
+	}
+	
+	public function panel() {
+		$this->contactList();
+	}
+	
 	public function contactList() {
 		$aUsers = $this->ChatUser->getContactListUsers($this->currUserID);
 		$this->set('aUsers', $aUsers);
@@ -45,7 +53,7 @@ class ChatAjaxController extends PAjaxController {
 	public function updateState() {
 		try {
 			$data = $this->ChatEvent->getActiveEvents($this->currUserID);
-			fdebug($data, 'update_chat.log', false);
+			// fdebug($data, 'update_chat.log', false);
 			$this->setResponse($data);
 		} catch (Exception $e) {
 			$this->setError($e->getMessage());

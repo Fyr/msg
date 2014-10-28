@@ -31,12 +31,16 @@ define('DOMAIN_NAME', 'struct.dev');
 define('DOMAIN_TITLE', 'Struct.DEV');
 
 define('AUTH_ERROR', __('Invalid username or password, try again'));
-define('TEST_ENV', $_SERVER['SERVER_ADDR'] == '192.168.1.31');
+define('TEST_ENV', $_SERVER['SERVER_ADDR'] == '192.168.1.22');
 
 define('EMAIL_ADMIN', 'fyr.work@gmail.com');
 define('EMAIL_ADMIN_CC', 'fyr.work@gmail.com');
 
 define('PATH_FILES_UPLOAD', $_SERVER['DOCUMENT_ROOT'].'/files/');
+
+Configure::write('baseURL', array(
+	'ipad' => 'http://phppainkiller.ru/struct2/'
+));
 
 function fdebug($data, $logFile = 'tmp.log', $lAppend = true) {
 	file_put_contents($logFile, mb_convert_encoding(print_r($data, true), 'cp1251', 'utf8'), ($lAppend) ? FILE_APPEND : null);

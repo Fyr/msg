@@ -2,6 +2,8 @@ var Chat = {
 	
 	INCOMING_MSG: 2,
 	enableUpdate: true,
+	timer: null,
+	panel: null,
 	
 	zformat: function (n) {
 		return (n < 10) ? '0' + n : n;
@@ -12,42 +14,50 @@ var Chat = {
 		return date.getHours() + ':' + Chat.zformat(date.getMinutes());
 	},
 	
-	fixDialogHeight: function () {
+	fixPanelHeight: function () {
 		messagesHeight = $(window).height() - 82;
-		$("#allMessages").height(messagesHeight);
+		$(".allMessages", Chat.panel).height(messagesHeight);
+		$(".allMessages", Chat.panel).getNiceScroll().resize();
 		
 		var dialogHeight = $(window).height() - $(".bottom").height();
 		$(".dialog").height(dialogHeight);
 		$(".dialog").getNiceScroll().resize();
-		
-		$("#menuBarScroll").height($(window).height());
-		$("#menuBarScroll").getNiceScroll().resize();
 	},
 	
 	scrollTop: function () {
 		$(".dialog").scrollTop($(".innerDialog").height() - $(".dialog").height() + 97);
 	},
 	
-	showContactList: function () {
-		$(".userMessages").show();
-		$("#allMessages").niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none"});
-		$("#allMessages").getNiceScroll().show();
+	initPanel: function (container) {
+		Chat.panel = container;
+		$(Chat.panel).load(chatURL.panel, null, function(){
+			$(".allMessages", Chat.panel).niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none"});
+			Chat.fixPanelHeight();
+			Chat.timer = setInterval(function(){
+				Chat.updateState();
+			}, 5000);
+		});
+	},
+	
+	panelShow: function () {
+		$(Chat.panel).show();
+		$(".allMessages", Chat.panel).getNiceScroll().show();
 		$(".menuBar div").removeClass("active");
 		$(".menuBar .glyphicons.chat").parent().addClass("active");
 	},
 	
-	hideContactList: function () {
-		$(".userMessages").hide();
-		$("#allMessages").getNiceScroll().hide();
+	panelHide: function () {
+		$(Chat.panel).hide();
+		$(".allMessages", Chat.panel).getNiceScroll().hide();
 		$(".menuBar .glyphicons.chat").parent().removeClass("active");
 	},
 	
-	toggleContactList: function () {
-		if ($(".userMessages").is(':visible')) {
-			Chat.hideContactList();
+	panelToggle: function () {
+		if ($(Chat.panel).is(':visible')) {
+			Chat.panelHide();
 		} else {
-			$("#allMessages").load(chatURL.contactList, null, function(){
-				Chat.showContactList();
+			$(".allMessages", Chat.panel).load(chatURL.contactList, null, function(){
+				Chat.panelShow();
 			});
 		}
 		
@@ -80,7 +90,7 @@ var Chat = {
 	},
 	
 	openRoom: function (userID) {
-		Chat.hideContactList();
+		Chat.panelHide();
 		Chat.enableUpdate = false;
 		$.post(chatURL.openRoom, {data: {user_id: userID}}, function(response){
 			Chat.enableUpdate = true;
@@ -110,6 +120,7 @@ var Chat = {
 		} else if (($nextRoom = $(".openChats #roomTab_" + roomID).prev()) && $nextRoom.length) {
 			_roomID = $nextRoom.prop('id').replace(/roomTab_/, '');
 		}
+		
 		$(".openChats #roomTab_" + roomID).remove();
 		if (_roomID) {
 			Chat.activateRoom(_roomID);
@@ -152,7 +163,7 @@ var Chat = {
 			}, 'json');
 		}
 		
-		Chat.fixDialogHeight();
+		Chat.fixPanelHeight();
 		// Chat.scrollTop();
 	},
 	

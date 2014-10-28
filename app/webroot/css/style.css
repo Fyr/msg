@@ -1,5 +1,5 @@
 body { font-family: 'Open Sans', sans-serif; color: #313131; }
-
+a { text-decoration: none !important;}
 .icon { background-image: url('../img/sprite.png'); background-repeat: no-repeat; display: inline-block; }
 .icon_add { background-position: 0 0; width: 52px; height: 52px; }
 .icon_add:hover { background-position: 0 -278px;}
@@ -53,12 +53,12 @@ body { font-family: 'Open Sans', sans-serif; color: #313131; }
 
 .bottom { position: fixed; left: 90px; bottom: 0; width: 100%; z-index: 100; background: #fff;}	
 	
-.openChats { padding: 0; white-space: nowrap; }
+.openChats { padding: 0; }
 	.openChats .item { border: 1px solid #eee; border-left: none; position: relative; float: left; }
-		.openChats .item .ava { border-bottom: 2px solid #23b5ae; display: block; width: 50px; height: 50px; float: left;}
+		.openChats .item .ava { border-bottom: 2px solid #23b5ae; display: inline-block; width: 50px; height: 50px; cursor: pointer; vertical-align: middle;}
 		.openChats .item .badge.badge-important { position: absolute; bottom: -8px; left: 17px; z-index: 3;}
 		.openChats .item .remove { border-left: 1px solid #eee; height:39px; padding: 13px 12px 0 12px; float: right;}
-		.openChats .item .name { font-size: 15px; margin: 0 0 0 0;  border-left: none; margin: 0 42px 0 50px; padding: 15px 19px 0 21px;}
+		.openChats .item .name { font-size: 15px;  border-left: none; margin: 0; padding: 0 19px 0 19px; cursor: pointer; max-width: 200px; display: inline-block; vertical-align: middle;}
 		.openChats .item .circle_remove { color: #c1c1c1; margin-top: -3px;}
 		.openChats .item .circle_remove:before { font-size: 16px;}
 	
@@ -67,6 +67,9 @@ body { font-family: 'Open Sans', sans-serif; color: #313131; }
 		.openChats .item.active .circle_remove, .openChats .item:hover .circle_remove  { color: #fff;}
 		.openChats .item.active .remove, .openChats .item:hover .remove { border-left-color: #67cbd2;}
 		.openChats .item.active .name, .openChats .item:hover .name { color:#fff;}
+		
+		.openChats .item:hover .ava { opacity: 0.7; filter: alpha(opacity=70);}
+		.openChats .item .circle_remove:hover { color: #dfdfdf;}
 	
 	
 .sendForm  { margin: 20px auto 20px auto; width: 59.7%; max-width: 544px; position: relative;}
@@ -78,43 +81,8 @@ body { font-family: 'Open Sans', sans-serif; color: #313131; }
 		.sendForm .formBottom .inputFile { float: left;}
 		.sendForm .formBottom .inputFile input[type=file] { opacity: 0; width: 31px; height: 31px; overflow: hidden; cursor: pointer;}
 		.sendForm .formBottom span { float: right; font-size: 11px; color: #aeaeae;}
-
-.userMessages { width: 267px; background: #f4f4f4; height: 100%;  position: fixed; left: 90px; z-index: 1000;}
-	.userMessages .searchBlock { height: 47px; padding: 35px 26px 0 30px;}
-	.userMessages .searchBlock input { width: 190px; float: left; background: none; border: none; box-shadow: none; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; font-size: 15px;}
-	.userMessages .searchBlock .glyphicons.search:before { color: #616166; font-size: 15px;}
-	.userMessages .searchBlock .glyphicons.search { float: right; margin-top: -2px;}
-	
-	.userMessages .myOrders { border-top: 1px solid #E4E6E8; border-bottom: 1px solid #e4e6e8; padding: 18px 0 20px 26px;}
-
-	.userMessages .userItem { border-top: 1px solid #e4e6e8; padding: 17px 18px 15px 24px; color: #313131; }
-		.userMessages .userItem.active { background: #e5f0ef;}
-		.userMessages .userItem:hover { cursor: pointer; background: #e5f0ef; }
-		.userMessages .userItem .ava { float: left; width: 50px; height: 50px; display: block; border-bottom: 2px solid #23b5ae;}
-		.userMessages .userItem .topName { margin: 0 0 0 67px;}
-		.userMessages .userItem .name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; width: 122px;}
-		.userMessages .userItem .time { color: #818181; font-size: 11px; float: right; line-height: 23px;}
-		.userMessages .userItem .message { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; width: 135px;}
-		.userMessages .userItem .badge-important { float: right; margin: 0 3px 0 0;}
-		
-	.userMessages .productItem { border-bottom: 1px solid #e4e6e8; padding: 21px 5px 22px 29px; color: #313131; font-weight: 600; }
-		.userMessages .productItem.active { background: #e5f0ef;}
-		.userMessages .productItem .thumb { float: left; width: 70px;}
-			.userMessages .productItem .thumb img { display: block; max-width: 70px;}
-		.userMessages .productItem .name { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 163px; margin-left: 70px; padding-top: 6px;}
-		.userMessages .productItem .description { font-size: 13px; color: #616161; margin-left: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 163px;}
-		.userMessages .productItem .orderInfo { padding-top: 12px; margin-left: 70px;}
-			.userMessages .productItem .orderInfo .btn { padding-left: 9px; padding-right: 8px; margin-left: 11px;}
 			
-	.userMessages .recharge { position: absolute; bottom:0; left: 26px; color: #313131; font-size: 15px; padding: 0 0 17px 0;}
-		.userMessages .recharge .wallet:before { font-size: 22px;}
-		.userMessages .recharge .wallet { color: #616161;  float: left;}
-		.userMessages .recharge .text { margin-left: 31px; padding-top: 5px;}
-			.userMessages .recharge .text .balance { padding-bottom: 5px;}
-			.userMessages .recharge .text a { color: #1580be; border-bottom: 1px solid #c1dae8; padding-bottom: 2px; text-decoration: none;}
-			.userMessages .recharge .text a:hover { border-bottom: none; }
-			
-.pageOrder { margin: 0 0 0 126px; padding-bottom: 50px; padding-right: 35px;}
+.pageOrder { margin: 0 0 0 126px; padding-right: 35px;}
 	.pageOrder h1 { margin: 0; padding: 20px 0 24px 0; font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 36px;}
 	.pageOrder .rightButton { float: right; margin: 34px 0 0 10px;}
 	.pageOrder .rightButton.active { background: #22b5ae; color: #fff; text-shadow: none; box-shadow: none; }
@@ -136,7 +104,7 @@ body { font-family: 'Open Sans', sans-serif; color: #313131; }
 			
 			.pageOrder .product .description .select110 { width: 110px;}
 			
-	.pageOrder .contactForm { margin: 24px 0 0 0;}
+	.pageOrder .contactForm { margin: 24px 0 50px 0;}
 		.pageOrder .contactForm label { color: #818181; font-size: 11px; margin-top: 29px;}
 		.pageOrder .contactForm input[type="text"] {
 			border: none;
