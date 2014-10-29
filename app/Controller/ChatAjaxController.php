@@ -4,6 +4,21 @@ App::uses('PAjaxController', 'Core.Controller');
 class ChatAjaxController extends PAjaxController {
 	public $name = 'ChatAjax';
 	public $uses = array('ChatUser', 'ChatMessage', 'ChatEvent');
+
+	public function beforeFilter() {
+		if (TEST_ENV) {
+			$this->currUserID = $this->Session->read('currUser.id');
+		} else {
+			$this->loadModel('ClientProject');
+			$userData = ClientProject::getUserAuthData();
+			$this->currUserID = Hash::get($userData, 'user_id');
+		}
+		if (!$this->currUserID) {
+			$this->autoRender = false;
+			exit('You must be authorized');
+		}
+		$this->currUser = $this->ChatUser->getUser($this->currUserID);
+	}
 	
 	public function jsSettings() {
 		$this->loadModel('ChatRoom');

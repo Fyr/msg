@@ -111,7 +111,7 @@ $(document).ready(function () {
 
 	<div class="menuBar">
 		<div id="menuBarScroll">
-			<img class="userLogo" src="<?=$currUser['Avatar']['url']?>" alt="" style="width: 90px;" />
+			<img class="userLogo" src="<?=$currUser['Avatar']['url']?>" alt="<?=$currUser['ChatUser']['name']?>" style="width: 90px;" />
 			<div><a href="javascript: void(0)" class="glyphicons calendar"></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons notes"></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons chat"><span class="badge badge-important"></span></a></div>
