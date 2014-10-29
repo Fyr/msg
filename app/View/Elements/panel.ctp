@@ -1,5 +1,5 @@
 <div class="searchBlock clearfix">
-	<input type="text" value="Найти собеседника"  />
+	<input type="text" placeholder="Найти собеседника"  />
 	<a href="javascript: void(0)" class="glyphicons search"></a>
 </div>
 <div class="allMessages">

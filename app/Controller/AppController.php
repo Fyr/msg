@@ -25,21 +25,26 @@ class AppController extends Controller {
 	}
 	
 	public function beforeFilter() {
-		$userID = Hash::get($this->request->params, 'pass.0');
-		$action = Hash::get($this->request->params, 'action');
-		if ($userID && $action == 'auth') {
-			$this->Session->write('currUser.id', $userID);
-			$this->redirect('/');
-			return false;
-		}
-		// fdebug($this->Session->read(), 'session.log', false);
-		$this->currUserID = $this->Session->read('currUser.id');
-		if (!$this->currUserID) {
-			$this->autoRender = false;
-			exit('You must be authorized');
+		if (TEST_ENV) {
+			$userID = Hash::get($this->request->params, 'pass.0');
+			$action = Hash::get($this->request->params, 'action');
+			if ($userID && $action == 'auth') {
+				$this->Session->write('currUser.id', $userID);
+				$this->redirect('/');
+				return false;
+			}
+			$this->currUserID = $this->Session->read('currUser.id');
+			if (!$this->currUserID) {
+				$this->autoRender = false;
+				exit('You must be authorized');
+			}
+		} else {
+			$this->loadModel('ClientProject');
+			$userData = ClientProject::getUserAuthData();
+			$this->currUserID = $userData['user_id'];
 		}
 		$this->currUser = $this->ChatUser->getUser($this->currUserID);
-		// fdebug($this->currUser, 'curr_user'.$this->currUserID.'.log', false);
+		//fdebug($this->currUser, 'curr_user'.$this->currUserID.'.log', false);
 	}
 	
 	public function beforeRender() {

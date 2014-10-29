@@ -26,10 +26,12 @@
 		'vendor/tmpl.min',
 		'/core/js/json_handler',
 		'chat',
-		$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'jsSettings'), true),
-		$baseURL['ipad'].'SiteAjax/jsSettings',
-		$baseURL['ipad'].'/js/struct.js'
+		$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'jsSettings'), true)
 	);
+	if (!TEST_ENV) {
+		$aScripts[] =$baseURL['ipad'].'SiteAjax/jsSettings';
+		$aScripts[] = $baseURL['ipad'].'/js/struct.js';
+	}
 	echo $this->Html->script($aScripts);
 
 	echo $this->fetch('meta');

@@ -69,4 +69,8 @@ class AppModel extends Model {
 			$this->$model = new $model();
 		}
 	}
+
+	public function getTableName() {
+		return $this->getDataSource()->fullTableName($this);
+	}
 }

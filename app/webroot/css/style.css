@@ -57,11 +57,13 @@ a { text-decoration: none !important;}
 	.openChats .item { border: 1px solid #eee; border-left: none; position: relative; float: left; }
 		.openChats .item .ava { border-bottom: 2px solid #23b5ae; display: inline-block; width: 50px; height: 50px; cursor: pointer; vertical-align: middle;}
 		.openChats .item .badge.badge-important { position: absolute; bottom: -8px; left: 17px; z-index: 3;}
-		.openChats .item .remove { border-left: 1px solid #eee; height:39px; padding: 13px 12px 0 12px; float: right;}
+		.openChats .item .remove { border-left: 1px solid #eee; height:39px; padding: 13px 12px 0 12px; float: right; width: 16px;}
 		.openChats .item .name { font-size: 15px;  border-left: none; margin: 0; padding: 0 19px 0 19px; cursor: pointer; max-width: 200px; display: inline-block; vertical-align: middle;}
 		.openChats .item .circle_remove { color: #c1c1c1; margin-top: -3px;}
 		.openChats .item .circle_remove:before { font-size: 16px;}
-	
+		
+		.openChats .item.disable-remove .circle_remove { display: none;}
+		.openChats .item.disable-remove .remove { border-left-color: #25b5be !important;}
 	
 	.openChats .item.active, .openChats .item:hover { background: #25b5be;}
 		.openChats .item.active .circle_remove, .openChats .item:hover .circle_remove  { color: #fff;}

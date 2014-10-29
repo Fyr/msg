@@ -1,12 +1,21 @@
 <?php
 App::uses('AppModel', 'Model');
 class ChatUser extends AppModel {
-	public $useTable = 'users';
-	public $primaryKey = 'ID';
+	public $useDbConfig = 'users';
+	public $useTable = 'clients';
+	public $primaryKey = 'id';
+	
+	public $hasOne = array(
+		'ChatUserData' => array(
+			'foreignKey' => 'user_id'
+		)
+	);
+	
+	protected $ChatEvent;
 	
 	protected function _initUserData($user) {
-		$user['ChatUser']['id'] = $user['ChatUser'][$this->primaryKey];
-		$user['Avatar']['url'] = '/img/temp/'.$user['ChatUser']['id'].'.jpg';
+		$user['ChatUser']['name'] = (trim($user['ChatUserData']['full_name'])) ? $user['ChatUserData']['full_name'] : $user['ChatUser']['username'];
+		$user['Avatar']['url'] = (trim($user['ChatUserData']['avatar'])) ? $user['ChatUserData']['avatar'] : '/img/no-photo.jpg';
 		return $user;
 	}
 
@@ -16,16 +25,11 @@ class ChatUser extends AppModel {
 	}
 	
 	public function getContactListUsers($currUserID) {
-		// TODO: replace this hard-code!!!
-		$aActiveRooms = $this->query('SELECT `ChatEvent`.room_id, SUM(active) AS `count`, `ChatUser`.ID, `ChatUser`.name, `ChatEvent`.created, `ChatMessage`.message
-FROM chat_events AS `ChatEvent`
-JOIN chat_messages AS `ChatMessage` ON `ChatEvent`.msg_id = `ChatMessage`.id
-JOIN users AS `ChatUser` ON `ChatMessage`.user_id = `ChatUser`.id
-WHERE `ChatEvent`.user_id = '.$currUserID.' AND `ChatEvent`.active = 1
-GROUP BY `ChatEvent`.room_id
-ORDER BY count DESC');
+		$this->loadModel('ChatEvent');
+		
+		$aActiveRooms = $this->ChatEvent->getActiveRooms($currUserID);
 		foreach($aActiveRooms as &$user) {
-			$user = $this->_initUserData($user);
+			$user = array_merge($user, $this->getUser($user['ChatMessage']['user_id']));
 			$user['ChatMessage']['count'] = $user[0]['count'];
 			unset($user[0]);
 		}

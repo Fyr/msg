@@ -108,4 +108,15 @@ class ChatEvent extends AppModel {
 	public function markInactive($ids) {
 		$this->updateAll(array('active' => self::INACTIVE), array('id' => $ids));
 	}
+	
+	public function getActiveRooms($userID) {
+		$this->loadModel('ChatMessage');
+		
+		$fields = array('ChatEvent.room_id', 'ChatEvent.created', 'ChatMessage.user_id', 'ChatMessage.message', 'SUM(active) AS count');
+		$conditions = array('ChatEvent.user_id' => $userID, 'ChatEvent.active' => 1);
+		$joins = array(array('table' => $this->ChatMessage->getTableName(), 'alias' => 'ChatMessage', 'conditions' => array('`ChatEvent`.msg_id = `ChatMessage`.id')));
+		$order = array('count DESC');
+		$group = array('ChatEvent.room_id');
+		return $this->find('all', compact('fields', 'conditions', 'joins', 'order', 'group'));
+	}
 }

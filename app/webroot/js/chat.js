@@ -41,7 +41,15 @@ var Chat = {
 					Chat.updateState();
 				}, chatUpdateTime);
 			}
-			Chat.openRoom(userID);
+			if (userID) {
+				Chat.openRoom(userID);
+			}
+			$(".searchBlock input", Chat.panel).click(function(){
+				$(this).val('');
+			});
+			$(".searchBlock input", Chat.panel).change(function(){
+				Chat.filterContactList($(".searchBlock input", Chat.panel).val());
+			});
 		});
 	},
 	
@@ -137,11 +145,6 @@ var Chat = {
 		}, 'json');
 	},
 	
-	createRoomTab: function (data) {
-		$(".openChats").append(Chat.renderRoomTab(data));
-		Chat.clearUnreadEvents(data.room.ChatRoom.id);
-	},
-	
 	removeRoom: function (roomID) {
 		var $nextRoom, _roomID = 0;
 		if (($nextRoom = $(".openChats #roomTab_" + roomID).next()) && $nextRoom.length) {
@@ -150,13 +153,15 @@ var Chat = {
 			_roomID = $nextRoom.prop('id').replace(/roomTab_/, '');
 		}
 		
-		$(".openChats #roomTab_" + roomID).remove();
 		if (_roomID) {
+			$(".openChats #roomTab_" + roomID).remove();
 			Chat.activateRoom(_roomID);
 		} else {
+			/* don't allow to close the last tab!!!
 			$(".openChats .item").removeClass('active');
 			$(".dialog .innerDialog .chatRoom").hide();
 			$(".sendForm").hide();
+			*/
 		}
 	},
 	
@@ -174,6 +179,12 @@ var Chat = {
 		$(".openChats .item").removeClass('active');
 		$(".openChats #roomTab_" + roomID).addClass('active');
 		$(".sendForm").show();
+		
+		if ($(".openChats .item").length > 1) { // one tab
+			Chat.enableCloseTabs();
+		} else {
+			Chat.disableCloseTabs();
+		}
 		
 		$(".dialog .innerDialog .chatRoom").hide();
 		$(".dialog .innerDialog #roomChat_" + roomID).show();
@@ -198,6 +209,19 @@ var Chat = {
 	
 	renderRoomTab: function (data) {
 		return tmpl('room-tab', data);
+	},
+	
+	createRoomTab: function (data) {
+		$(".openChats").append(Chat.renderRoomTab(data));
+		Chat.clearUnreadEvents(data.room.ChatRoom.id);
+	},
+	
+	disableCloseTabs: function () {
+		$(".openChats .item").addClass('disable-remove');
+	},
+	
+	enableCloseTabs: function () {
+		$(".openChats .item").removeClass('disable-remove');
 	},
 	
 	renderRoomChat: function (roomID) {
@@ -313,6 +337,20 @@ var Chat = {
 	
 	isUpdateEnabled: function () {
 		return Chat.enableLevel == 0;
-	}
+	},
 	
+	filterContactList: function (filter) {
+		$(".allMessages .userItem", Chat.panel).each(function(){
+			if (filter) {
+				var name = $(".topName .name", this).html();
+				if (name.substr(0, filter.length).toLowerCase() == filter.toLowerCase()) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			} else {
+				$(this).show();
+			}
+		});
+	}
 }

@@ -42,7 +42,7 @@ Configure::write('baseURL', array(
 	'ipad' => 'http://phppainkiller.ru/struct2/'
 ));
 
-Configure::write('chatUpdateTime', 2000); // in msec, 0 - do not update
+Configure::write('chatUpdateTime', 0); // in msec, 0 - do not update
 
 function fdebug($data, $logFile = 'tmp.log', $lAppend = true) {
 	file_put_contents($logFile, mb_convert_encoding(print_r($data, true), 'cp1251', 'utf8'), ($lAppend) ? FILE_APPEND : null);

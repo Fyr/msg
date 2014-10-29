@@ -5,12 +5,13 @@
 	.userMessages .searchBlock .glyphicons.search { float: right; margin-top: -2px;}
 	
 
-	.userMessages .userItem { border-top: 1px solid #e4e6e8; padding: 17px 18px 15px 24px; color: #313131; }
+	.userMessages .userItem { border-top: 1px solid #e4e6e8; padding: 17px 18px 15px 24px; color: #444; }
 		.userMessages .userItem.active { background: #e5f0ef;}
 		.userMessages .userItem:hover { cursor: pointer; background: #e5f0ef; }
 		.userMessages .userItem .ava { float: left; width: 50px; height: 50px; display: block; border-bottom: 2px solid #23b5ae;}
 		.userMessages .userItem .topName { margin: 0 0 0 67px;}
 		.userMessages .userItem .name { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; width: 122px;}
+		.userMessages .userItem .name span { color: #000;}
 		.userMessages .userItem .time { color: #818181; font-size: 11px; float: right; line-height: 23px;}
 		.userMessages .userItem .message { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; width: 135px;}
 		.userMessages .userItem .badge-important { float: right; margin: 0 3px 0 0;}
