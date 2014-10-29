@@ -6,3 +6,4 @@ var chatURL = {
 	openRoom: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'openRoom'), true)?>.json',
 	markRead: '<?=$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'markRead'), true)?>.json',
 }
+chatUpdateTime = <?=Configure::read('chatUpdateTime')?>

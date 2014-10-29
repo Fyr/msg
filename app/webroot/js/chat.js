@@ -1,9 +1,10 @@
 var Chat = {
 	
 	INCOMING_MSG: 2,
-	enableUpdate: true,
+	enableLevel: 0,
 	timer: null,
 	panel: null,
+	innerCall: true,
 	
 	zformat: function (n) {
 		return (n < 10) ? '0' + n : n;
@@ -28,14 +29,19 @@ var Chat = {
 		$(".dialog").scrollTop($(".innerDialog").height() - $(".dialog").height() + 97);
 	},
 	
-	initPanel: function (container) {
+	initPanel: function (container, userID) {
 		Chat.panel = container;
+		Chat.innerCall = userID && true;
+		// load panel anyway
 		$(Chat.panel).load(chatURL.panel, null, function(){
 			$(".allMessages", Chat.panel).niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none"});
 			Chat.fixPanelHeight();
-			Chat.timer = setInterval(function(){
-				Chat.updateState();
-			}, 5000);
+			if (chatUpdateTime) {
+				Chat.timer = setInterval(function(){
+					Chat.updateState();
+				}, chatUpdateTime);
+			}
+			Chat.openRoom(userID);
 		});
 	},
 	
@@ -44,24 +50,47 @@ var Chat = {
 		$(".allMessages", Chat.panel).getNiceScroll().show();
 		$(".menuBar div").removeClass("active");
 		$(".menuBar .glyphicons.chat").parent().addClass("active");
+		Chat.disableUpdate();
 	},
 	
 	panelHide: function () {
 		$(Chat.panel).hide();
 		$(".allMessages", Chat.panel).getNiceScroll().hide();
 		$(".menuBar .glyphicons.chat").parent().removeClass("active");
+		Chat.enableUpdate();
 	},
 	
 	panelToggle: function () {
 		if ($(Chat.panel).is(':visible')) {
 			Chat.panelHide();
 		} else {
-			$(".allMessages", Chat.panel).load(chatURL.contactList, null, function(){
+			$(".allMessages", Chat.panel).load(chatURL.contactList, {data: {type: (Chat.innerCall) ? '' : 'external'}}, function(){
 				Chat.panelShow();
+				var count = 0;
+				$(".allMessages .topName span.badge").each(function(){
+					count+= ($(this).html() == '10+') ? 10 : parseInt($(this).html());
+				});
 			});
+			/*
+			$.get(chatURL.contactList, null, function(response){
+				if (checkJson(response)) {
+					$(".allMessages", Chat.panel).html(Chat.renderPanel(response.data));
+					Chat.panelShow();
+				}
+			});
+			*/
 		}
 		
 	},
+	/*
+	renderPanel: function (data) {
+		var html = '';
+		for(var i = 0; i < data.length; i++) {
+			html+= tmpl('panel-item', data[i]);
+		}
+		return html;
+	},
+	*/
 	
 	sendMsg: function () {
 		var msg = $(".sendForm textarea").val();
@@ -91,9 +120,8 @@ var Chat = {
 	
 	openRoom: function (userID) {
 		Chat.panelHide();
-		Chat.enableUpdate = false;
+		Chat.disableUpdate();
 		$.post(chatURL.openRoom, {data: {user_id: userID}}, function(response){
-			Chat.enableUpdate = true;
 			if (checkJson(response)) {
 				roomID = response.data.room.ChatRoom.id;
 				if (!$(".openChats #roomTab_" + roomID).length) { 
@@ -104,6 +132,7 @@ var Chat = {
 				}
 				Chat.dispatchEvents(response.data);
 				Chat.activateRoom(roomID);
+				Chat.enableUpdate();
 			}
 		}, 'json');
 	},
@@ -155,10 +184,10 @@ var Chat = {
 			Chat.showUnreadTab(roomID);
 			Chat.showUnreadTotal(Chat.countUnreadTotal());
 			var readIds = Chat.renderEvents(roomID, aUnreadEvents);
-			Chat.enableUpdate = false;
+			Chat.disableUpdate();
 			$.post(chatURL.markRead, {data: {ids: readIds}}, function(response){
-				Chat.enableUpdate = true;
 				if (checkJson(response)) {
+					Chat.enableUpdate();
 				}
 			}, 'json');
 		}
@@ -183,21 +212,22 @@ var Chat = {
 	},
 	
 	updateState: function () {
-		if (Chat.enableUpdate) {
-			Chat.enableUpdate = false;
+		if (Chat.isUpdateEnabled()) {
+			Chat.disableUpdate();
 			$.get(chatURL.updateState, null, function(response){
-				Chat.enableUpdate = true;
 				if (checkJson(response)) {
 					Chat.dispatchEvents(response.data);
 					if (roomID = Chat.getActiveRoom()) {
 						Chat.activateRoom(roomID);
 					}
+					Chat.enableUpdate();
 				}
 			}, 'json');
 		}
 	},
 
 	dispatchEvents: function (data) {
+		Chat.disableUpdate();
 		$(".openChats .item").each(function(){
 			var roomID = this.id.replace(/roomTab_/, '');
 			Chat.clearUnreadEvents(roomID);
@@ -223,6 +253,7 @@ var Chat = {
 			Chat.showUnreadTab(roomID);
 		});
 		Chat.showUnreadTotal(data.events.length);
+		Chat.enableUpdate();
 	},
 	
 	addUnreadEvent: function (roomID, event) {
@@ -267,5 +298,21 @@ var Chat = {
 			count = '';
 		}
 		$(".glyphicons.chat > span.badge").html(count);
+	},
+	
+	enableUpdate: function () {
+		Chat.enableLevel--;
+		if (Chat.enableLevel < 0) {
+			Chat.enableLevel = 0;
+		}
+	},
+	
+	disableUpdate: function () {
+		Chat.enableLevel++;
+	},
+	
+	isUpdateEnabled: function () {
+		return Chat.enableLevel == 0;
 	}
+	
 }

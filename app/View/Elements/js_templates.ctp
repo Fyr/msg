@@ -6,6 +6,7 @@
 	<div class="name">{%=o.user.ChatUser.name%}</div>
 </div>
 </script>
+
 <script type="text/x-tmpl" id="room-chat">
 <div id="roomChat_{%=o.room_id%}" class="chatRoom"></div>
 </script>
@@ -20,3 +21,17 @@
 </div>
 <div class="clearfix"></div>
 </script>
+
+<!-- script type="text/x-tmpl" id="panel-item">
+<div class="userItem clearfix" onclick="Chat.openRoom({%=o.ChatUser.id%})">
+	<a href="javascript: void(0)"><img class="ava" src="{%=o.Avatar.url%}" alt="{%=o.ChatUser.name%}" /></a>
+	<div class="topName">
+		<span class="name">{%=o.ChatUser.name%}</span>
+		<span class="time">{%=o.ChatEvent.name%}</span>
+	</div>
+	<div class="topName">
+		<span class="message">{%=o.ChatMessage.message%}</span>
+		<span class="badge badge-important">{%=o.ChatMessage.count%}</span>
+	</div>
+</div>
+</script-->

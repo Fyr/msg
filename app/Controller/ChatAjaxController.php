@@ -6,14 +6,26 @@ class ChatAjaxController extends PAjaxController {
 	public $uses = array('ChatUser', 'ChatMessage', 'ChatEvent');
 	
 	public function jsSettings() {
-		
+		$this->loadModel('ChatRoom');
 	}
 	
 	public function panel() {
+		/*
+		$aUsers = $this->ChatUser->getContactListUsers($this->currUserID);
+		$this->set('aUsers', $aUsers);
+		*/
 		$this->contactList();
 	}
 	
 	public function contactList() {
+		/*
+		try {
+			$aUsers = $this->ChatUser->getContactListUsers($this->currUserID);
+			$this->setResponse($aUsers);
+		} catch (Exception $e) {
+			$this->setError($e->getMessage());
+		}
+		*/
 		$aUsers = $this->ChatUser->getContactListUsers($this->currUserID);
 		$this->set('aUsers', $aUsers);
 	}

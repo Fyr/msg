@@ -16,7 +16,23 @@ class ChatUser extends AppModel {
 	}
 	
 	public function getContactListUsers($currUserID) {
-		$aUsers = $this->find('all');
+		// TODO: replace this hard-code!!!
+		$aActiveRooms = $this->query('SELECT `ChatEvent`.room_id, SUM(active) AS `count`, `ChatUser`.ID, `ChatUser`.name, `ChatEvent`.created, `ChatMessage`.message
+FROM chat_events AS `ChatEvent`
+JOIN chat_messages AS `ChatMessage` ON `ChatEvent`.msg_id = `ChatMessage`.id
+JOIN users AS `ChatUser` ON `ChatMessage`.user_id = `ChatUser`.id
+WHERE `ChatEvent`.user_id = '.$currUserID.' AND `ChatEvent`.active = 1
+GROUP BY `ChatEvent`.room_id
+ORDER BY count DESC');
+		foreach($aActiveRooms as &$user) {
+			$user = $this->_initUserData($user);
+			$user['ChatMessage']['count'] = $user[0]['count'];
+			unset($user[0]);
+		}
+		
+		$aUserID = Hash::extract($aActiveRooms, '{n}.ChatUser.id');
+		$conditions = array('NOT' => array($this->primaryKey => $aUserID));
+		$aUsers = $this->find('all', compact('conditions'));
 		foreach($aUsers as $i => &$user) {
 			$userID = $user['ChatUser'][$this->primaryKey];
 			if ($userID != $currUserID) {
@@ -25,7 +41,7 @@ class ChatUser extends AppModel {
 				unset($aUsers[$i]);
 			}
 		}
-		return $aUsers;
+		return array_merge($aActiveRooms, $aUsers);
 	}
 	
 	public function getUsers($aID) {

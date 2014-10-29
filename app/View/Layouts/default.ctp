@@ -60,7 +60,7 @@ $(document).ready(function () {
 	$(".dialog").niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none"});
 	$(".sendForm textarea").niceScroll({cursorwidth:"5px",cursorcolor:"#999999",cursorborder:"none", autohidemode: "false"});
 	
-	Chat.initPanel($(".userMessages.chat").get(0));
+	Chat.initPanel($(".userMessages.chat").get(0), <?=$userID?>);
 	
 	$(".menuBar .glyphicons.chat").bind('click', function(event) {
 		if ($(".userMessages.ipad").is(':visible')) {
@@ -109,12 +109,12 @@ $(document).ready(function () {
 
 	<div class="menuBar">
 		<div id="menuBarScroll">
-			<img class="userLogo" src="<?=$currUser['Avatar']['url']?>" alt="" />
+			<img class="userLogo" src="<?=$currUser['Avatar']['url']?>" alt="" style="width: 90px;" />
 			<div><a href="javascript: void(0)" class="glyphicons calendar"></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons notes"></a></div>
-			<div><a href="javascript: void(0)" class="glyphicons chat"><span class="badge badge-important">11</span></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons chat"><span class="badge badge-important"></span></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons search"></a></div>
-			<div><a href="javascript: void(0)" class="glyphicons credit_card"><span class="badge badge-important">1</span></a></div>
+			<div><a href="javascript: void(0)" class="glyphicons credit_card"><span class="badge badge-important"></span></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons file"></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons cloud"></a></div>
 			<div><a href="javascript: void(0)" class="glyphicons nameplate"></a></div>
@@ -131,9 +131,11 @@ $(document).ready(function () {
 	
 	<div class="usersInChat">
 		<a class="icon icon_add" href="javascript: void(0)"></a>
+		<!--
 		<a href="javascript: void(0)"><img alt="" src="img/temp/2.jpg"></a>
 		<a href="javascript: void(0)"><img alt="" class="active" src="img/temp/3.jpg"></a>
 		<a href="javascript: void(0)"><img alt="" src="img/temp/1.jpg"></a>
+		-->
 	</div>
 	<div class="bottom">
 		<div class="openChats clearfix">
@@ -147,5 +149,6 @@ $(document).ready(function () {
 	    </div>
 	</div>
 	<?=$this->element('js_templates')?>
+	<?//$this->element('sql_dump')?>
 </body>
 </html>

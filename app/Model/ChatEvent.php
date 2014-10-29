@@ -69,21 +69,15 @@ class ChatEvent extends AppModel {
 	public function openRoom($currUserID, $userID) {
 		$this->loadModel('ChatRoom');
 		
-		// room can be already opened by another user
-		$conditions = array('initiator_id' => $userID, 'recipient_id' => $currUserID);
-		$room = $this->ChatRoom->find('first', compact('conditions'));
+		$room = $this->ChatRoom->getRoomWith2Users($currUserID, $userID);
 		if (!$room) {
-			$conditions = array('initiator_id' => $currUserID, 'recipient_id' => $userID);
-			$room = $this->ChatRoom->find('first', compact('conditions'));
-			if (!$room) {
-				$this->ChatRoom->clear();
-				$data = $conditions;
-				if (!$this->ChatRoom->save($data)) {
-					throw new Exception("Room cannot be opened\n".print_r($data));
-				}
-				$room = $this->ChatRoom->findById($this->ChatRoom->id);
-				$this->_addEvent(self::ROOM_OPENED, $currUserID, $room['ChatRoom']['id'], $userID, self::INACTIVE);
+			$this->ChatRoom->clear();
+			$data = array('initiator_id' => $currUserID, 'recipient_id' => $userID);
+			if (!$this->ChatRoom->save($data)) {
+				throw new Exception("Room cannot be opened\n".print_r($data));
 			}
+			$room = $this->ChatRoom->findById($this->ChatRoom->id);
+			$this->_addEvent(self::ROOM_OPENED, $currUserID, $room['ChatRoom']['id'], $userID, self::INACTIVE);
 		}
 		return $room;
 	}
@@ -99,6 +93,10 @@ class ChatEvent extends AppModel {
 		$messages = $this->ChatMessage->findAllById($aMsgID);
 		$aAuthorsID = Hash::extract($messages, '{n}.ChatMessage.user_id');
 		$authors = $this->ChatUser->getUsers($aAuthorsID);
+		
+		foreach($events as &$event) {
+			$event['ChatEvent']['created'] = date('H:i', strtotime($event['ChatEvent']['created']));
+		}
 		
 		// rebuild data to have IDs as keys 
 		// $events = Hash::combine($events, '{n}.ChatEvent.id', '{n}.ChatEvent');
