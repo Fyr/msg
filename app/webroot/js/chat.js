@@ -1,6 +1,5 @@
 var Chat = {
 	
-	INCOMING_MSG: 2,
 	enableLevel: 0,
 	timer: null,
 	panel: null,
@@ -79,26 +78,9 @@ var Chat = {
 					count+= ($(this).html() == '10+') ? 10 : parseInt($(this).html());
 				});
 			});
-			/*
-			$.get(chatURL.contactList, null, function(response){
-				if (checkJson(response)) {
-					$(".allMessages", Chat.panel).html(Chat.renderPanel(response.data));
-					Chat.panelShow();
-				}
-			});
-			*/
 		}
 		
 	},
-	/*
-	renderPanel: function (data) {
-		var html = '';
-		for(var i = 0; i < data.length; i++) {
-			html+= tmpl('panel-item', data[i]);
-		}
-		return html;
-	},
-	*/
 	
 	sendMsg: function () {
 		var msg = $(".sendForm textarea").val();
@@ -126,6 +108,25 @@ var Chat = {
 		Chat.scrollTop();
 	},
 	
+	renderAddFile: function (msg, url, file_name) {
+		return tmpl('extra-msg', {msg: msg, url: url, file_name: file_name});
+	},
+	
+	addFile: function (msg, url, file_name, roomID) {
+		if (!roomID) {
+			roomID = Chat.getActiveRoom();
+		}
+		$(".dialog .innerDialog #roomChat_" + roomID).append(Chat.renderAddFile(msg, url, file_name));
+	},
+	
+	sendFile: function (fileData) {
+		Chat.addFile(chatLocale.fileUploaded, fileData.url_download, fileData.orig_fname);
+		$.post(chatURL.sendFile, {data: {id: fileData.id, roomID: Chat.getActiveRoom()}}, function(response){
+			if (checkJson(response)) {
+			}
+		}, 'json');
+	},
+	
 	openRoom: function (userID) {
 		Chat.panelHide();
 		Chat.disableUpdate();
@@ -138,7 +139,7 @@ var Chat = {
 				if (!$(".dialog .innerDialog #roomChat_" + roomID).length) { 
 					$(".dialog .innerDialog").append(Chat.renderRoomChat(roomID));
 				}
-				Chat.dispatchEvents(response.data);
+				Chat.dispatchEvents(response.data.events);
 				Chat.activateRoom(roomID);
 				Chat.enableUpdate();
 			}
@@ -169,7 +170,11 @@ var Chat = {
 		aID = new Array();
 		for(var i = 0; i < aEvents.length; i++) {
 			var event = aEvents[i];
-			Chat.addMsg(event.msg, event.user, event.time, roomID);
+			if (event.event_type == chatDef.incomingMsg) {
+				Chat.addMsg(event.msg, event.user, event.time, roomID);
+			} else if (event.event_type == chatDef.fileDownloadAvail) {
+				Chat.addFile(chatLocale.fileReceived, event.url, event.file_name, roomID);
+			}
 			aID.push(event.id);
 		}
 		return aID;
@@ -204,7 +209,7 @@ var Chat = {
 		}
 		
 		Chat.fixPanelHeight();
-		// Chat.scrollTop();
+		Chat.scrollTop();
 	},
 	
 	renderRoomTab: function (data) {
@@ -256,20 +261,29 @@ var Chat = {
 			var roomID = this.id.replace(/roomTab_/, '');
 			Chat.clearUnreadEvents(roomID);
 		});
-		
 		for(var i = 0; i < data.events.length; i++) {
 			var event = data.events[i].ChatEvent;
 			$roomTab = $(".openChats #roomTab_" + event.room_id);
-			
 			if ($roomTab.length) {
-				var msg = data.messages[event.msg_id];
-				Chat.addUnreadEvent(event.room_id, {
-					id: event.id,
-					event_type: event.event_type,
-					msg: msg.message,
-					time: event.created,
-					user: data.authors[msg.user_id]
-				});
+				if (event.event_type == chatDef.incomingMsg) {
+					var msg = data.messages[event.msg_id];
+					Chat.addUnreadEvent(event.room_id, {
+						id: event.id,
+						event_type: event.event_type,
+						time: event.created,
+						msg: msg.message,
+						user: data.authors[event.initiator_id]
+					});
+				} else if (event.event_type == chatDef.fileDownloadAvail) {
+					var file = data.files[event.file_id];
+					Chat.addUnreadEvent(event.room_id, {
+						id: event.id,
+						event_type: event.event_type,
+						time: event.created,
+						url: file.url_download,
+						file_name: file.orig_fname
+					});
+				}
 			}
 		}
 		$(".openChats .item").each(function(){

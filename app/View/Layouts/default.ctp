@@ -15,21 +15,29 @@
 		'glyphicons', 
 		'style', 
 		'msg_panel',
+		'progress-bar',
 		$baseURL['ipad'].'css/struct_panel.css'
 	);
 	echo $this->Html->css($css);
 	
 	$aScripts = array(
 		'vendor/jquery/jquery-1.10.2.min',
+		'vendor/jquery/jquery.ui.widget',
 		'vendor/bootstrap.min',
-		'vendor/jquery.nicescroll.min',
+		'vendor/jquery/jquery.nicescroll.min',
 		'vendor/tmpl.min',
 		'/core/js/json_handler',
 		'chat',
-		$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'jsSettings'), true)
+		$this->Html->url(array('controller' => 'ChatAjax', 'action' => 'jsSettings'), true),
 	);
+	
+	// Files required for upload
+	$aScripts[] = 'vendor/jquery/jquery.iframe-transport';
+	$aScripts[] = 'vendor/jquery/jquery.fileupload';
+	$aScripts[] = '/Table/js/format';
+	$aScripts[] = 'upload';
 	if (!TEST_ENV) {
-		$aScripts[] =$baseURL['ipad'].'SiteAjax/jsSettings';
+		$aScripts[] = $baseURL['ipad'].'SiteAjax/jsSettings';
 		$aScripts[] = $baseURL['ipad'].'/js/struct.js';
 	}
 	echo $this->Html->script($aScripts);

@@ -66,6 +66,9 @@ class AppModel extends Model {
 		}
 		foreach($models as $model) {
 			App::import('Model', $model);
+			if (strpos($model, '.') !== false) {
+				list($plugin, $model) = explode('.', $model);
+			}
 			$this->$model = new $model();
 		}
 	}

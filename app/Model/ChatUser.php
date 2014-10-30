@@ -29,8 +29,8 @@ class ChatUser extends AppModel {
 		
 		$aActiveRooms = $this->ChatEvent->getActiveRooms($currUserID);
 		foreach($aActiveRooms as &$user) {
-			$user = array_merge($user, $this->getUser($user['ChatMessage']['user_id']));
-			$user['ChatMessage']['count'] = $user[0]['count'];
+			$user = array_merge($user, $this->getUser($user['ChatEvent']['initiator_id']));
+			$user['ChatEvent']['count'] = $user[0]['count'];
 			unset($user[0]);
 		}
 		

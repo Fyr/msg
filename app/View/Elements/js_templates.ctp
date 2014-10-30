@@ -14,7 +14,7 @@
 <script type="text/x-tmpl" id="chat-msg">
 <div class="{%=((o.user) ? 'leftMessage' : 'rightMessage')%} clearfix">
 {% if (o.user) { %}
-	<img class="ava" src="{%=o.user.Avatar.url%}" alt="" />
+	<img class="ava" src="{%=o.user.Avatar.url%}" alt="{%=o.user.ChatUser.name%}" style="width: 50px" />
 {% } %}
 	<div class="time">{%=o.time%}</div>
 	<div class="text">{%=o.msg%}</div>
@@ -22,16 +22,6 @@
 <div class="clearfix"></div>
 </script>
 
-<!-- script type="text/x-tmpl" id="panel-item">
-<div class="userItem clearfix" onclick="Chat.openRoom({%=o.ChatUser.id%})">
-	<a href="javascript: void(0)"><img class="ava" src="{%=o.Avatar.url%}" alt="{%=o.ChatUser.name%}" /></a>
-	<div class="topName">
-		<span class="name">{%=o.ChatUser.name%}</span>
-		<span class="time">{%=o.ChatEvent.name%}</span>
-	</div>
-	<div class="topName">
-		<span class="message">{%=o.ChatMessage.message%}</span>
-		<span class="badge badge-important">{%=o.ChatMessage.count%}</span>
-	</div>
-</div>
-</script-->
+<script type="text/x-tmpl" id="extra-msg">
+<div class="date">{%=o.msg%}: <a href="{%=o.url%}" target="_blank">{%=o.file_name%}</a></div>
+</script>

@@ -3,14 +3,13 @@ App::uses('AppController', 'Controller');
 App::uses('PAjaxController', 'Core.Controller');
 class AjaxController extends PAjaxController {
 	public $name = 'Ajax';
-	public $components = array('Core.PCAuth');
+	// public $components = array('Core.PCAuth');
 	public $uses = array('Media.Media');
 	
 	public function upload() {
 		$this->autoRender = false;
 		App::uses('UploadHandler', 'Media.Vendor');
 		$upload_handler = new UploadHandler();
-		// $this->set('_serialize', '');
 	}
 
 	public function move() {
@@ -33,7 +32,7 @@ class AjaxController extends PAjaxController {
 	}
 	
 	public function getList($object_type, $object_id) {
-	    $this->setResponse($this->Media->getList(compact('object_type', 'object_id')));
+	    $this->setResponse($this->Media->getList(compact('object_type', 'object_id'), array('Media.id' => 'DESC')));
 	}
 	
 	public function delete($object_type, $object_id, $id) {

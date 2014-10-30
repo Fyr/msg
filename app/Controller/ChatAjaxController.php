@@ -77,6 +77,22 @@ class ChatAjaxController extends PAjaxController {
 		}
 	}
 	
+	public function sendFile() {
+		$roomID = $this->request->data('roomID');
+		$mediaID = $this->request->data('id');
+		try {
+			if (!($mediaID && $roomID)) {
+				throw new Exception('Incorrect request');
+			}
+			
+			$this->ChatEvent->addFile($this->currUserID, $roomID, $mediaID);
+			
+			return $this->setResponse(true);
+		} catch (Exception $e) {
+			$this->setError($e->getMessage());
+		}
+	}
+	
 	public function updateState() {
 		try {
 			$data = $this->ChatEvent->getActiveEvents($this->currUserID);

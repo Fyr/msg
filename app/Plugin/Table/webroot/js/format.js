@@ -17,15 +17,31 @@ Format = {
 		}
 		return Format.tag('img', attrs);
 	},
-	fileSize: function(bytes) {
-		var sizes = ['', 'Kb', 'Mb', 'Gb'];
-		var value = bytes;
-		for (var i = 0; i < sizes.length; i++) {
-			if (value < 1024) {
-				return Math.round(value * 10, 1) / 10 + sizes[i];
-			}
-			value = value / 1024;
+	fileSize: function(value) {
+		if (typeof(value) == 'number') {
+			var sizes = ['', 'Kb', 'Mb', 'Gb'];
+			for (var i = 0; i < sizes.length; i++) {
+				if (value < 1024 || i == (sizes.length - 1)) {
+					return value.toFixed(2) + sizes[i];
+				}
+				value = value / 1024;
+			}	
 		}
-		return value;
+		return '';
+	},
+	bitrate: function(bits) {
+		return this.fileSize(bits) + 'its/sec';
+	},
+	time: function (seconds) {
+		var date = new Date(seconds * 1000),
+		days = Math.floor(seconds / 86400);
+		days = days ? days + 'd ' : '';
+		return days +
+			('0' + date.getUTCHours()).slice(-2) + ':' +
+			('0' + date.getUTCMinutes()).slice(-2) + ':' +
+			('0' + date.getUTCSeconds()).slice(-2);
+	},
+	percentage: function (floatValue) {
+		return (floatValue * 100).toFixed(2) + '%';
 	}
 }

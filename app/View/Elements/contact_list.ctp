@@ -7,7 +7,7 @@
 			$time = date('H:i', strtotime($time));
 		}
 		
-		$count = Hash::get($user, 'ChatMessage.count');
+		$count = Hash::get($user, 'ChatEvent.count');
 		if ($count > 10) {
 			$count = '10+';
 		}

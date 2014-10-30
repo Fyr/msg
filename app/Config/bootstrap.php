@@ -39,7 +39,8 @@ define('EMAIL_ADMIN_CC', 'fyr.work@gmail.com');
 define('PATH_FILES_UPLOAD', $_SERVER['DOCUMENT_ROOT'].'/files/');
 
 Configure::write('baseURL', array(
-	'ipad' => 'http://phppainkiller.ru/struct2/'
+	'ipad' => 'http://phppainkiller.ru/struct2/',
+	// 'media' => '/device'
 ));
 
 Configure::write('chatUpdateTime', 0); // in msec, 0 - do not update
